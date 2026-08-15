@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SSEI">
+<meta name="theme-color" content="#10151C">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%2310151C'/%3E%3Crect x='24' y='84' width='132' height='12' fill='%23F2B705'/%3E%3Crect x='24' y='52' width='84' height='12' fill='%23E6EDF3'/%3E%3Crect x='24' y='116' width='60' height='12' fill='%237D8B99'/%3E%3C/svg%3E">
+<title>SSEI · Preparación AENA</title>
+<style>
+:root{
+  --bg:#10151C; --panel:#182029; --panel2:#1E2833; --line:#2B3743;
+  --hi:#F2B705; --go:#5BC98C; --stop:#E8503A; --txt:#E6EDF3; --dim:#7D8B99;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);font-family:var(--sans);overscroll-behavior:none}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);min-height:100vh}
+.wrap{max-width:560px;margin:0 auto;padding:16px 16px 40px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+h1{font-size:26px;line-height:1.1;letter-spacing:-.02em;margin:6px 0 2px;font-weight:800}
+h2{font-size:15px;letter-spacing:.02em;margin:0 0 10px;font-weight:700}
+.sub{color:var(--dim);font-size:13px;margin:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+.row{display:flex;gap:10px;align-items:center}
+.row.between{justify-content:space-between}
+button{font-family:inherit;font-size:16px;border:none;border-radius:12px;padding:14px 16px;background:var(--panel2);color:var(--txt);font-weight:650;cursor:pointer;border:1px solid var(--line)}
+button:active{transform:scale(.985)}
+button:focus-visible{outline:2px solid var(--hi);outline-offset:2px}
+.primary{background:var(--hi);color:#10151C;border-color:var(--hi)}
+.ghost{background:transparent}
+.danger{background:transparent;color:var(--stop);border-color:#4A2A25}
+.full{width:100%}
+.grid{display:grid;gap:8px}
+.sessbtn{display:block;width:100%;text-align:left;padding:14px;background:var(--panel);border:1px solid var(--line)}
+.sessbtn .t{font-size:16px;font-weight:700}
+.sessbtn .m{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
+.sessbtn.done{border-color:#2C4A3A}
+.sessbtn.done .t::after{content:" ✓";color:var(--go)}
+/* runway progress */
+.runway{display:flex;gap:3px;margin:14px 0 18px}
+.runway i{flex:1;height:5px;border-radius:2px;background:var(--line)}
+.runway i.on{background:var(--hi)}
+.runway i.cur{background:var(--txt)}
+/* player */
+.blockh{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--hi)}
+.blocktitle{font-size:30px;line-height:1.12;font-weight:800;letter-spacing:-.025em;margin:8px 0 10px}
+.blockdet{font-size:17px;line-height:1.45;color:var(--txt);margin:0 0 12px}
+.cues{list-style:none;padding:0;margin:12px 0 0;border-top:1px solid var(--line)}
+.cues li{font-size:14px;color:var(--dim);padding:9px 0 0;line-height:1.35}
+.cues li::before{content:"— ";color:var(--hi)}
+.clock{font-family:var(--mono);font-size:76px;font-weight:700;letter-spacing:-.04em;text-align:center;margin:18px 0 6px;font-variant-numeric:tabular-nums}
+.clock.warn{color:var(--hi)}
+.clock.over{color:var(--stop)}
+.stage{min-height:46vh;display:flex;flex-direction:column;justify-content:center}
+.bar{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(16,21,28,0),var(--bg) 30%);padding:14px 0 6px;display:flex;gap:8px}
+.bar button{flex:1}
+input[type=number],input[type=text]{width:100%;font-family:var(--mono);font-size:34px;font-weight:700;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--txt);padding:14px;text-align:center}
+input:focus{outline:2px solid var(--hi)}
+.mic{width:100%;margin-top:10px;background:var(--panel2)}
+.mic.live{background:var(--stop);color:#fff;border-color:var(--stop)}
+.hint{font-size:12px;color:var(--dim);text-align:center;margin-top:8px;line-height:1.4}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chips button{flex:0 1 auto;padding:12px 16px;font-size:15px}
+.chips button.sel{background:var(--hi);color:#10151C;border-color:var(--hi)}
+.logline{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:8px 0;border-bottom:1px solid var(--line)}
+.logline b{font-family:var(--mono);font-weight:700}
+.logline:last-child{border:none}
+textarea{width:100%;height:220px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--txt);font-family:var(--mono);font-size:12px;padding:12px;line-height:1.5}
+.tabs{display:flex;gap:6px;margin:14px 0}
+.tabs button{flex:1;padding:11px;font-size:14px}
+.tabs button.sel{background:var(--txt);color:#10151C;border-color:var(--txt)}
+.hide{display:none!important}
+.mini{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
+.field{margin:10px 0}
+.field label{display:block;font-size:13px;color:var(--dim);margin-bottom:6px}
+.field input{font-size:24px;padding:11px}
+@media(prefers-reduced-motion:no-preference){.stage{animation:in .22s ease}}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ============================================================
+   ALMACENAMIENTO  (localStorage con respaldo en memoria)
+   ============================================================ */
+const mem = {};
+const DB = {
+  read(){
+    try{ return JSON.parse(localStorage.getItem('ssei')||'{}'); }
+    catch(e){ return mem.d || {}; }
+  },
+  write(d){
+    try{ localStorage.setItem('ssei', JSON.stringify(d)); }
+    catch(e){ mem.d = d; }
+  },
+  get(k,def){ const d=this.read(); return k in d ? d[k] : def; },
+  set(k,v){ const d=this.read(); d[k]=v; this.write(d); }
+};
+const today = () => new Date().toISOString().slice(0,10);
+const esDate = iso => {
+  const [y,m,d] = iso.split('-').map(Number);
+  const dt = new Date(y,m-1,d);
+  const dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const mes=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return dias[dt.getDay()]+' '+d+' '+mes[m-1];
+};
+
+/* ============================================================
+   VOZ
+   ============================================================ */
+let voice=null, ttsOn = DB.get('tts',true), audioCtx=null;
+function pickVoice(){
+  const vs = speechSynthesis.getVoices();
+  voice = vs.find(v=>v.lang==='es-ES'&&/Mónica|Monica|Marisol/i.test(v.name))
+       || vs.find(v=>v.lang==='es-ES') || vs.find(v=>v.lang.startsWith('es')) || null;
+}
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function say(t){
+  if(!ttsOn || !('speechSynthesis' in window) || !t) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(String(t).replace(/·/g,'.').replace(/×/g,' por '));
+    if(voice) u.voice = voice;
+    u.lang='es-ES'; u.rate=1.0; u.pitch=1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function prime(){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended') audioCtx.resume();
+  }catch(e){}
+  if('speechSynthesis' in window){
+    try{ const u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u); }catch(e){}
+  }
+}
+function beep(times=3){
+  if(!audioCtx) return;
+  for(let i=0;i<times;i++){
+    const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.type='square'; o.frequency.value = i===times-1 ? 1180 : 880;
+    const t0=audioCtx.currentTime + i*0.28;
+    g.gain.setValueAtTime(0.0001,t0);
+    g.gain.exponentialRampToValueAtTime(0.32,t0+0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001,t0+0.22);
+    o.connect(g); g.connect(audioCtx.destination); o.start(t0); o.stop(t0+0.24);
+  }
+}
+/* Reconocimiento de voz → número en español */
+const NUM = {cero:0,un:1,uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,
+once:11,doce:12,trece:13,catorce:14,quince:15,dieciseis:16,dieciséis:16,diecisiete:17,dieciocho:18,diecinueve:19,
+veinte:20,veintiuno:21,veintiún:21,veintidos:22,veintidós:22,veintitres:23,veintitrés:23,veinticuatro:24,veinticinco:25,
+veintiseis:26,veintiséis:26,veintisiete:27,veintiocho:28,veintinueve:29,treinta:30,cuarenta:40,cincuenta:50,
+sesenta:60,setenta:70,ochenta:80,noventa:90,cien:100,ciento:100};
+function parseNum(s){
+  if(!s) return null;
+  s = s.toLowerCase().replace(/,/g,'.');
+  const dig = s.match(/-?\d+(\.\d+)?/);
+  if(dig) return parseFloat(dig[0]);
+  let total=null;
+  for(const w of s.split(/\s+|,/)){
+    const c=w.replace(/[^a-záéíóúñ]/g,'');
+    if(c==='y') continue;
+    if(c in NUM){ total = (total===null?0:total) + NUM[c]; }
+  }
+  return total;
+}
+let rec=null, recActive=false;
+function listen(onText, btn){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ alert('Este navegador no reconoce voz. Escribe el dato o usa Safari.'); return; }
+  if(recActive){ try{rec.stop();}catch(e){} return; }
+  try{ speechSynthesis.cancel(); }catch(e){}
+  rec = new SR();
+  rec.lang='es-ES'; rec.interimResults=false; rec.maxAlternatives=3; rec.continuous=false;
+  recActive=true; btn && btn.classList.add('live'); btn && (btn.textContent='● Escuchando… toca para parar');
+  rec.onresult = e => { onText(e.results[0][0].transcript); };
+  rec.onerror = e => { if(e.error==='not-allowed') alert('Falta permiso de micrófono. Ajustes → Safari → Micrófono.'); };
+  rec.onend = () => { recActive=false; btn && btn.classList.remove('live'); btn && (btn.textContent='🎤 Responder hablando'); };
+  try{ rec.start(); }catch(e){ recActive=false; }
+}
+/* Pantalla siempre encendida */
+let wl=null;
+async function keepAwake(on){
+  try{
+    if(on && 'wakeLock' in navigator){ wl = await navigator.wakeLock.request('screen'); }
+    else if(wl){ wl.release(); wl=null; }
+  }catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible' && state.view==='play') keepAwake(true); });
+
+/* ============================================================
+   PROGRAMA · SEMANA 1  (16–23 agosto 2026)
+   ============================================================ */
+const NEURAL = [
+  {t:'info',h:'Protocolo neural',d:'12 minutos. Intensidad máxima 6 sobre 10. Estirar más fuerte empeora el rango.'},
+  {t:'ex',h:'Slider ciático',d:'2 × 12 por pierna',cues:['Sentado, pierna estirada, punta del pie arriba','Rodilla se estira → barbilla al techo','Rodilla se dobla → barbilla al pecho','Es deslizamiento, no debe tirar fuerte']},
+  {t:'ex',h:'Isquios con báscula pélvica',d:'3 × 45 s por pierna',cues:['Tumbado, cinta en el pie','Lumbar pegada al suelo, pelvis rotada adelante','Tensión 6 sobre 10, no más','Afloja un grado en cada espiración']},
+  {t:'ex',h:'Posición de sit and reach',d:'3 × 60 s',cues:['Piernas juntas y rectas','Flexiona desde la CADERA, no desde la espalda','Pecho hacia los pies, no cabeza a las rodillas','Sin rebotes']},
+  {t:'ex',h:'Gemelo contra la pared',d:'2 × 45 s por pierna',cues:['Serie 1: rodilla de atrás RECTA','Serie 2: rodilla de atrás doblada','Talón siempre clavado en el suelo']},
+  {t:'ex',h:'Gato-camello',d:'2 × 10',cues:['En cuadrupedia, vértebra a vértebra','Lento y controlado']},
+  {t:'info',h:'Protocolo completo',d:'Hecho. Marca la casilla y sigue con tu día.'}
+];
+const MANOS = {t:'ask',id:'manos',h:'¿Cómo van las manos?',kind:'choice',options:['Bien','Molestan','Ampolla','Muy doloridas']};
+
+const CAL = {
+  'neural':{name:'Protocolo neural',tag:'DIARIO · 12 MIN',blocks:NEURAL},
+
+  'dom-recup':{name:'Recuperación',tag:'DOMINGO · 75 MIN',blocks:[
+    {t:'info',h:'Día suave',d:'Hoy no se entrena. Solo caminar, movilidad y manos.'},
+    {t:'ex',h:'Caminar 75 minutos',d:'Al aire libre, ritmo vivo. Puedes partirlo en dos.',cues:['5,5 a 6 km/h','Nada de colgarse hoy','Cero agarre']},
+    {t:'ask',id:'caminata',h:'¿Cuántos minutos has caminado?',kind:'num',unit:'min'},
+    MANOS,
+    {t:'info',h:'Antes de dormir',d:'Hidrata las manos. Hora fija de acostarte. Sin pantallas los últimos 45 minutos.'}
+  ]},
+
+  'lun-fuerzaA':{name:'Fuerza A · Empuje y tracción',tag:'LUNES · 70 MIN',blocks:[
+    {t:'info',h:'Sesión de calidad',d:'Objetivo de hoy: el test oficial de press y empezar a construir la dominada.'},
+    {t:'ex',h:'Remo suave',d:'8 minutos a 2:15–2:20 por 500 m',cues:['Calentar, no entrenar']},
+    {t:'ex',h:'Movilidad de hombro',d:'Círculos 10+10 · Dislocaciones 2×10 · Rotación externa 2×15 · Face pull 2×15',cues:['Rotación externa: el codo NO se despega del costado','Face pull: codos altos, manos a los lados de la cabeza']},
+    {t:'info',h:'TEST OFICIAL DE PRESS',d:'Barra libre dentro del rack, pines a la altura del pecho. Barra 20 kg + 10 kg por lado = 40 kg exactos.'},
+    {t:'ex',h:'Aproximación',d:'20 kg × 5 rápidas',cues:['Solo la barra']},
+    {t:'timer',h:'Descanso',sec:90},
+    {t:'ex',h:'Aproximación',d:'40 kg × 3 rápidas',cues:['Calibrar sensación, no fatigar']},
+    {t:'timer',h:'Descanso completo',sec:240},
+    {t:'ex',h:'TEST · 40 kg en 30 segundos',d:'Máximo de repeticiones válidas. Graba de lado.',cues:['Pies clavados en el suelo','Glúteos pegados al banco','Pulgar rodeando la barra','La barra TOCA el pecho','Bloqueo total de codos arriba','Puedes descansar arriba, nunca abajo']},
+    {t:'timer',h:'30 segundos · TEST',sec:30},
+    {t:'ask',id:'press40',h:'¿Repeticiones válidas?',kind:'num',unit:'reps'},
+    {t:'ask',id:'press_nulas',h:'¿Cuántas te has anulado?',kind:'num',unit:'nulas'},
+    {t:'ask',id:'press_fallo',h:'¿Por qué has parado?',kind:'choice',options:['Fuerza','Quemazón','Ritmo','Técnica','Llegué a 30 s']},
+    {t:'timer',h:'Descanso',sec:360},
+    {t:'ex',h:'Dominadas escapulares · 4 × 8',d:'Descanso 90 s. Con straps si molestan las manos.',cues:['LOS CODOS NO SE DOBLAN','Baja los hombros alejándolos de las orejas','El cuerpo sube 3-5 cm, solo eso','Vuelve a colgar del todo, relajado','Este es tu ejercicio más importante']},
+    {t:'timer',h:'Descanso',sec:90},
+    {t:'timer',h:'Descanso',sec:90},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'ex',h:'Isométrico en ángulo muerto · 5 × 8 s',d:'Descanso 90 s',cues:['Desde suspensión completa','Sube SOLO 5-10 cm y aguanta 8 segundos','No intentes subir más','Enseña al sistema nervioso a arrancar']},
+    {t:'timer',h:'Descanso',sec:90},
+    {t:'timer',h:'Descanso',sec:90},
+    {t:'timer',h:'Descanso',sec:90},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'ex',h:'Negativas · 4 × 1 de 6 segundos',d:'Descanso 2 min',cues:['Súbete con el banco','Baja en 6 segundos EXACTOS','Controlada, no al máximo: hoy no vaciamos']},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'ex',h:'Jalón con pausa · 4 × 8 a 60 kg',d:'Descanso 2 min',cues:['Brazos totalmente estirados = barra ARRIBA','Deja que los hombros suban a las orejas','Pausa de 2 segundos ahí','Primero baja los hombros, DESPUÉS tira']},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'ex',h:'Remo con barra · 4 × 10 RPE 7',d:'Descanso 90 s',cues:['Espalda completamente recta, nunca curvada','Tronco a 45 grados','Barra hacia el ombligo','RPE 7 = podrías hacer 3 más','El tronco NO se balancea']},
+    {t:'timer',h:'Descanso',sec:90},
+    {t:'timer',h:'Descanso',sec:90},
+    {t:'timer',h:'Descanso',sec:90},
+    {t:'ex',h:'Press militar mancuernas · 3 × 10 RPE 7',d:'Descanso 90 s',cues:['Salud de hombro: obligatorio con tu historial']},
+    {t:'timer',h:'Descanso',sec:90},
+    {t:'timer',h:'Descanso',sec:90},
+    {t:'ex',h:'Core',d:'Plancha 3 × 45 s · Dead bug 3 × 10 por lado',cues:['Dead bug: lumbar PEGADA al suelo','Brazo y pierna contrarios','Si la espalda se despega, acorta el recorrido']},
+    {t:'ex',h:'Vuelta a la calma',d:'Remo 6 min suave · Dorsal y pectoral 2 × 30 s',cues:['Nada agresivo']},
+    {t:'ask',id:'rpe_sesion',h:'¿Cómo de dura ha sido la sesión?',kind:'choice',options:['Fácil','Correcta','Dura','Demasiado']},
+    MANOS,
+    {t:'ask',id:'notas',h:'¿Algo que deba saber? (molestias, incidencias)',kind:'text'}
+  ]},
+
+  'z2':{name:'Carrera Z2 · 45 min',tag:'AERÓBICO · 45 MIN',blocks:[
+    {t:'info',h:'Zona 2 de verdad',d:'Tus 5 minutos por kilómetro NO son zona 2, son zona 3. Te fatigan sin construir base.'},
+    {t:'ex',h:'45 minutos continuos',d:'Ritmo 6:00 a 6:20 por kilómetro',cues:['Test de conversación: frase entera sin cortarte','Si dudas, ve MÁS LENTO','Va a resultarte frustrante. Es correcto.','Aquí se construye el motor']},
+    {t:'ask',id:'z2_min',h:'¿Minutos completados?',kind:'num',unit:'min'},
+    {t:'ask',id:'z2_ritmo',h:'Ritmo medio (ej: 6.15)',kind:'num',unit:'min/km'},
+    {t:'ask',id:'z2_sens',h:'¿Podías hablar todo el rato?',kind:'choice',options:['Sí, fácil','Justo','No, iba ahogado']}
+  ]},
+
+  'mar-prev':{name:'Prevención',tag:'MARTES PM · 25 MIN',blocks:[
+    {t:'ex',h:'Nórdicos excéntricos asistidos · 3 × 5',d:'Bajada de 4 segundos',cues:['Tobillos sujetos, cuerpo RECTO de rodilla a hombro','Manos delante desde el principio, ayudándote','La cadera NO se dobla','Sin esto te rompes los isquios en septiembre']},
+    {t:'ex',h:'Elevaciones de talón',d:'3 × 15 rodilla recta + 3 × 15 rodilla flexionada',cues:['Aquiles y sóleo']},
+    {t:'ex',h:'Copenhagen plank · 2 × 20 s por lado',d:'Versión fácil: rodilla apoyada en el banco',cues:['Cuerpo en línea recta','Cadera despegada del suelo']},
+    {t:'ask',id:'prev_ok',h:'¿Has completado la prevención?',kind:'choice',options:['Completa','Parcial','No']}
+  ]},
+
+  'mie-fuerzaB':{name:'Fuerza B · Pierna y agarre',tag:'MIÉRCOLES · 65 MIN',blocks:[
+    {t:'ex',h:'Calentamiento',d:'Bici 8 min + movilidad de cadera y tobillo 5 min'},
+    {t:'ex',h:'Sentadilla trasera · 4 × 8 RPE 7',d:'Descanso 2:30',cues:['Empieza solo con la barra y sube','Barra sobre los trapecios, no el cuello','Muslo paralelo al suelo o algo más abajo','Quédate 3 reps lejos del fallo']},
+    {t:'timer',h:'Descanso',sec:150},
+    {t:'timer',h:'Descanso',sec:150},
+    {t:'timer',h:'Descanso',sec:150},
+    {t:'ask',id:'sq_kg',h:'¿Con cuántos kg has acabado?',kind:'num',unit:'kg'},
+    {t:'ex',h:'Peso muerto rumano · 3 × 10 RPE 7',d:'Descanso 2 min',cues:['Rodillas casi rectas, flexión mínima y fija','Cadera ATRÁS, como tocando una pared detrás','La barra roza las piernas','PARA en cuanto la espalda quiera curvarse','Con tu flexibilidad bajarás poco. Es correcto.']},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'ex',h:'Zancadas caminando · 3 × 10 por pierna',d:'Mancuernas ligeras'},
+    {t:'info',h:'CUERDA · 5 intentos',d:'Magnesio obligatorio. Descanso 3 minutos entre cada intento.'},
+    {t:'ex',h:'Cuerda · intento',d:'Sube solo con brazos lo que puedas',cues:['Agarre lo más alto que alcances','Pies SIN tocar el suelo, SIN saltar','Sin cronómetro esta semana','Baja con presa de piernas, SIN deslizar las manos','Si notas tirón en el bíceps: PARAS']},
+    {t:'timer',h:'Descanso',sec:180},
+    {t:'timer',h:'Descanso',sec:180},
+    {t:'timer',h:'Descanso',sec:180},
+    {t:'timer',h:'Descanso',sec:180},
+    {t:'ask',id:'cuerda_m',h:'¿Altura máxima alcanzada?',kind:'num',unit:'metros'},
+    {t:'ask',id:'cuerda_biceps',h:'¿Molestia en bíceps o codo?',kind:'choice',options:['Nada','Leve','Sí, he parado']},
+    {t:'ex',h:'Farmer walk · 4 × 40 m',d:'Mancuernas pesadas. Descanso 90 s.',cues:['Pecho alto, hombros atrás','Agarre sin castigar la piel']},
+    {t:'timer',h:'Descanso',sec:90},
+    {t:'timer',h:'Descanso',sec:90},
+    {t:'timer',h:'Descanso',sec:90},
+    {t:'ex',h:'Vuelta a la calma',d:'6 min suave + movilidad'},
+    MANOS,
+    {t:'ask',id:'notas',h:'¿Algo que deba saber?',kind:'text'}
+  ]},
+
+  'jue-screen':{name:'Screening de movilidad',tag:'JUEVES PM · 30 MIN',blocks:[
+    {t:'info',h:'Tres tests',d:'Estos números deciden dónde va el trabajo preventivo.'},
+    {t:'ex',h:'Knee-to-wall',d:'Rodilla a la pared sin levantar el talón',cues:['Pie apuntando recto a la pared','Aleja el pie 1 cm y repite hasta el máximo','Mide del dedo gordo a la pared']},
+    {t:'ask',id:'ktw_d',h:'Knee-to-wall pierna DERECHA',kind:'num',unit:'cm'},
+    {t:'ask',id:'ktw_i',h:'Knee-to-wall pierna IZQUIERDA',kind:'num',unit:'cm'},
+    {t:'ex',h:'Elevación de pierna recta activa',d:'Tumbado, sube una pierna sin doblar la otra'},
+    {t:'ask',id:'aslr_d',h:'Pierna recta DERECHA (grados aprox.)',kind:'num',unit:'º'},
+    {t:'ask',id:'aslr_i',h:'Pierna recta IZQUIERDA (grados aprox.)',kind:'num',unit:'º'},
+    {t:'ex',h:'Apley',d:'Manos a la espalda, una por arriba y otra por abajo'},
+    {t:'ask',id:'apley_dr',h:'Apley con DERECHA arriba',kind:'num',unit:'cm'},
+    {t:'ask',id:'apley_iz',h:'Apley con IZQUIERDA arriba',kind:'num',unit:'cm'}
+  ]},
+
+  'vie-vel':{name:'Pista · Introducción a la velocidad',tag:'VIERNES · 50 MIN',blocks:[
+    {t:'info',h:'Ni un solo sprint al 100 %',d:'A 95 kg y sin historial de velocidad, un máximo hoy es una rotura de isquios muy probable.'},
+    {t:'ex',h:'Trote suave',d:'10 minutos'},
+    {t:'ex',h:'Movilidad dinámica',d:'Talones al glúteo · Rodillas arriba · Skipping · Zancadas · 3 × 20 m cada uno'},
+    {t:'ex',h:'Progresivo 1 · 40 m al 60 %',d:'Descanso 2 min andando'},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'ex',h:'Progresivo 2 · 40 m al 65 %',d:'Descanso 2 min andando'},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'ex',h:'Progresivo 3 · 40 m al 70 %',d:'Descanso 2 min andando'},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'ex',h:'Progresivo 4 · 40 m al 75 %',d:'Descanso 2 min andando'},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'ex',h:'Progresivo 5 · 40 m al 80 %',d:'Descanso 2 min andando'},
+    {t:'timer',h:'Descanso',sec:120},
+    {t:'ex',h:'Progresivo 6 · 40 m al 80 %',d:'Último'},
+    {t:'ex',h:'Trote muy suave',d:'10 minutos'},
+    {t:'ask',id:'isquios',h:'¿Has notado algo en isquios o gemelos?',kind:'choice',options:['Nada','Tirantez leve','Molestia clara']}
+  ]},
+
+  'vie-trac':{name:'Tracción ligera',tag:'VIERNES PM · 35 MIN',blocks:[
+    {t:'ex',h:'Dominadas escapulares · 3 × 8',d:'Codos rectos siempre'},
+    {t:'ex',h:'Isométrico ángulo muerto · 4 × 8 s',d:'Sube 5-10 cm y aguanta'},
+    {t:'ex',h:'Jalón con pausa · 3 × 10 a 55 kg',d:'Pausa 2 s con brazos estirados'},
+    {t:'ex',h:'Face pull · 3 × 15',d:'Codos altos'},
+    MANOS
+  ]},
+
+  'sab-test':{name:'Pista · Tests de carrera',tag:'SÁBADO · 60 MIN',blocks:[
+    {t:'info',h:'Datos que definen 14 semanas',d:'Con esto calculo tus zonas reales y los ritmos exactos de todas las series.'},
+    {t:'ex',h:'Calentamiento',d:'Trote 8 min + movilidad dinámica + 3 progresivos de 60 m'},
+    {t:'ex',h:'TEST 1 · 10 minutos continuos',d:'Al ritmo más suave en que puedas hablar',cues:['Anota la distancia','Toma pulsaciones al acabar']},
+    {t:'timer',h:'TEST · 10 minutos',sec:600},
+    {t:'ask',id:'t10_m',h:'¿Distancia recorrida?',kind:'num',unit:'metros'},
+    {t:'ask',id:'t10_fc',h:'Pulsaciones al acabar',kind:'num',unit:'ppm'},
+    {t:'timer',h:'Descanso andando',sec:300},
+    {t:'ex',h:'TEST 2 · 1000 m a esfuerzo 8/10',d:'Fuerte, pero SIN vaciarte del todo',cues:['2 vueltas y media a la pista','No es un máximo']},
+    {t:'ask',id:'t1000',h:'Tiempo en 1000 m (ej: 4.35)',kind:'num',unit:'min'},
+    {t:'ask',id:'t1000_fc',h:'Pulsaciones al acabar',kind:'num',unit:'ppm'},
+    {t:'ex',h:'Vuelta a la calma',d:'Trote 10 min suave + estiramientos'}
+  ]}
+};
+
+const SCHEDULE = {
+  '2026-08-16':['neural','dom-recup','neural'],
+  '2026-08-17':['neural','lun-fuerzaA','neural'],
+  '2026-08-18':['neural','z2','mar-prev'],
+  '2026-08-19':['neural','mie-fuerzaB','neural'],
+  '2026-08-20':['neural','z2','jue-screen'],
+  '2026-08-21':['neural','vie-vel','vie-trac'],
+  '2026-08-22':['neural','sab-test','neural'],
+  '2026-08-23':['neural','dom-recup','neural']
+};
+
+/* ============================================================
+   ESTADO Y RENDER
+   ============================================================ */
+const state = {view:'home', sess:null, slot:0, i:0, tab:'hoy'};
+const app = document.getElementById('app');
+const H = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const doneKey = (d,slot) => 'done|'+d+'|'+slot;
+const ansKey  = (d,slot,id) => 'a|'+d+'|'+slot+'|'+id;
+
+function render(){
+  if(state.view==='play') return renderPlay();
+  return renderHome();
+}
+
+function renderHome(){
+  const d = today();
+  const list = SCHEDULE[d];
+  const daily = DB.get('daily|'+d,{});
+  let sess='';
+  if(list){
+    list.forEach((key,slot)=>{
+      const s = CAL[key]; if(!s) return;
+      const done = DB.get(doneKey(d,slot),false);
+      sess += `<button class="sessbtn ${done?'done':''}" data-open="${slot}">
+        <div class="t">${H(s.name)}</div><div class="m">${H(s.tag)}</div></button>`;
+    });
+  } else {
+    sess = `<div class="card"><p class="sub">No hay sesión programada para hoy en la semana 1. El plan cubre del 16 al 23 de agosto.</p></div>`;
+  }
+
+  app.innerHTML = `
+    <div class="eyebrow">Bomberos AENA · IC10 · semana 1</div>
+    <h1>${esDate(d)}</h1>
+    <p class="sub">Objetivo de la semana: preparar tejido, no ganar forma.</p>
+
+    <div class="tabs">
+      <button data-tab="hoy" class="${state.tab==='hoy'?'sel':''}">Hoy</button>
+      <button data-tab="diario" class="${state.tab==='diario'?'sel':''}">Diario</button>
+      <button data-tab="registro" class="${state.tab==='registro'?'sel':''}">Registro</button>
+    </div>
+
+    <div class="${state.tab==='hoy'?'':'hide'}">
+      <div class="grid">${sess}</div>
+      <div class="card">
+        <div class="row between">
+          <span class="mini">Voz del entrenador</span>
+          <button class="ghost" id="tts">${ttsOn?'Activada':'Desactivada'}</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="${state.tab==='diario'?'':'hide'}">
+      <div class="card">
+        <h2>Al despertar</h2>
+        <div class="field"><label>Pulsaciones tumbado, 60 s</label>
+          <input type="number" inputmode="numeric" id="fc" value="${daily.fc||''}" placeholder="85"></div>
+        <div class="field"><label>Sueño del 1 al 10</label>
+          <input type="number" inputmode="numeric" id="sueno" value="${daily.sueno||''}" placeholder="7"></div>
+        <div class="field"><label>Peso en ayunas, solo sábados</label>
+          <input type="number" inputmode="decimal" step="0.1" id="peso" value="${daily.peso||''}" placeholder="95.0"></div>
+        <button class="primary full" id="saveDaily">Guardar</button>
+        <p class="hint">Referencia: 85 ppm hoy. Objetivo 65-70 en ocho semanas.<br>Si un día estás 8-10 ppm por encima de tu media, baja la intensidad.</p>
+      </div>
+    </div>
+
+    <div class="${state.tab==='registro'?'':'hide'}">
+      <div class="card">
+        <h2>Resumen para Claude</h2>
+        <textarea id="sum" readonly>${H(buildSummary())}</textarea>
+        <div class="row" style="margin-top:10px">
+          <button class="primary" style="flex:1" id="copy">Copiar</button>
+          <button class="danger" id="reset">Borrar todo</button>
+        </div>
+        <p class="hint">Pégamelo en el chat el domingo y te monto la semana siguiente.</p>
+      </div>
+    </div>`;
+
+  app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{state.tab=b.dataset.tab;render();});
+  app.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{
+    prime(); state.slot=+b.dataset.open; state.sess=SCHEDULE[d][state.slot];
+    state.i=0; state.view='play'; keepAwake(true); render();
+  });
+  const t=app.querySelector('#tts'); if(t) t.onclick=()=>{ttsOn=!ttsOn;DB.set('tts',ttsOn);render();};
+  const sd=app.querySelector('#saveDaily');
+  if(sd) sd.onclick=()=>{
+    DB.set('daily|'+d,{fc:app.querySelector('#fc').value,sueno:app.querySelector('#sueno').value,peso:app.querySelector('#peso').value});
+    sd.textContent='Guardado ✓'; setTimeout(()=>sd.textContent='Guardar',1400);
+  };
+  const cp=app.querySelector('#copy');
+  if(cp) cp.onclick=async()=>{
+    const txt=app.querySelector('#sum').value;
+    try{ await navigator.clipboard.writeText(txt); cp.textContent='Copiado ✓'; }
+    catch(e){ const a=app.querySelector('#sum'); a.removeAttribute('readonly'); a.select(); document.execCommand('copy'); cp.textContent='Copiado ✓'; }
+    setTimeout(()=>cp.textContent='Copiar',1600);
+  };
+  const rs=app.querySelector('#reset');
+  if(rs) rs.onclick=()=>{ if(confirm('¿Borrar todos los registros? No se puede deshacer.')){ DB.write({}); ttsOn=true; render(); } };
+}
+
+let timerId=null;
+function renderPlay(){
+  clearInterval(timerId); timerId=null;
+  const d=today(), s=CAL[state.sess], b=s.blocks[state.i], n=s.blocks.length;
+  const seg = Array.from({length:n},(_,k)=>`<i class="${k<state.i?'on':k===state.i?'cur':''}"></i>`).join('');
+
+  let body='', spoken='';
+  if(b.t==='timer'){
+    body = `<div class="blockh">${H(b.h)}</div>
+      <div class="clock" id="clock">${fmt(b.sec)}</div>
+      <div class="row" style="gap:8px">
+        <button style="flex:1" id="start">Empezar</button>
+        <button style="flex:1" class="ghost" id="skip">Saltar</button>
+      </div>`;
+    spoken = b.h;
+  } else if(b.t==='ask'){
+    const prev = DB.get(ansKey(d,state.slot,b.id),'');
+    body = `<div class="blockh">Registro</div><div class="blocktitle">${H(b.h)}</div>`;
+    if(b.kind==='choice'){
+      body += `<div class="chips" id="chips">${b.options.map(o=>`<button data-v="${H(o)}" class="${prev===o?'sel':''}">${H(o)}</button>`).join('')}</div>`;
+    } else {
+      body += `<input ${b.kind==='num'?'type="number" inputmode="decimal"':'type="text"'} id="ans" value="${H(prev)}" placeholder="${H(b.unit||'')}">
+        <button class="mic" id="mic">🎤 Responder hablando</button>
+        <p class="hint">Di solo el dato: "veintiocho". Sin frases largas.</p>`;
+    }
+    spoken = b.h;
+  } else {
+    body = `<div class="blockh">${b.t==='ex'?'Ejercicio':'Aviso'}</div>
+      <div class="blocktitle">${H(b.h)}</div>
+      ${b.d?`<p class="blockdet">${H(b.d)}</p>`:''}
+      ${b.cues?`<ul class="cues">${b.cues.map(c=>`<li>${H(c)}</li>`).join('')}</ul>`:''}`;
+    spoken = b.h + (b.d? '. '+b.d : '');
+  }
+
+  app.innerHTML = `
+    <div class="row between">
+      <span class="mini">${H(s.name)}</span>
+      <button class="ghost" id="exit" style="padding:8px 12px;font-size:13px">Salir</button>
+    </div>
+    <div class="runway">${seg}</div>
+    <div class="stage">${body}</div>
+    <div class="bar">
+      <button class="ghost" id="prev" ${state.i===0?'disabled':''}>Atrás</button>
+      <button class="ghost" id="repeat">🔊</button>
+      <button class="primary" id="next">${state.i===n-1?'Terminar':'Siguiente'}</button>
+    </div>`;
+
+  say(spoken);
+
+  app.querySelector('#exit').onclick=()=>{keepAwake(false);state.view='home';render();};
+  app.querySelector('#repeat').onclick=()=>say(spoken);
+  app.querySelector('#prev').onclick=()=>{if(state.i>0){state.i--;render();}};
+  app.querySelector('#next').onclick=()=>{
+    if(b.t==='ask' && b.kind!=='choice'){
+      const v=app.querySelector('#ans').value;
+      if(v!=='') DB.set(ansKey(d,state.slot,b.id),v);
+    }
+    if(state.i===n-1){
+      DB.set(doneKey(d,state.slot),true); keepAwake(false);
+      say('Sesión completada. Buen trabajo.');
+      state.view='home'; state.tab='hoy'; render();
+    } else { state.i++; render(); }
+  };
+
+  if(b.t==='timer'){
+    const clock=app.querySelector('#clock'); let left=b.sec, run=false;
+    app.querySelector('#skip').onclick=()=>{state.i++;render();};
+    app.querySelector('#start').onclick=(e)=>{
+      prime();
+      if(run){ clearInterval(timerId); run=false; e.target.textContent='Seguir'; return; }
+      run=true; e.target.textContent='Pausa';
+      timerId=setInterval(()=>{
+        left--; clock.textContent=fmt(left);
+        clock.className='clock'+(left<=10?' warn':'');
+        if(left===10) say('Diez segundos');
+        if(left<=0){ clearInterval(timerId); clock.className='clock over'; beep(3); say('Vamos'); setTimeout(()=>{ if(state.view==='play'){state.i++;render();} },1400); }
+      },1000);
+    };
+  }
+  if(b.t==='ask'){
+    if(b.kind==='choice'){
+      app.querySelectorAll('#chips button').forEach(x=>x.onclick=()=>{
+        DB.set(ansKey(d,state.slot,b.id),x.dataset.v);
+        app.querySelectorAll('#chips button').forEach(y=>y.classList.remove('sel'));
+        x.classList.add('sel');
+        setTimeout(()=>{ if(state.i<CAL[state.sess].blocks.length-1){state.i++;render();} },260);
+      });
+    } else {
+      const mic=app.querySelector('#mic'), inp=app.querySelector('#ans');
+      mic.onclick=()=>listen(txt=>{
+        if(b.kind==='num'){ const v=parseNum(txt); if(v!==null) inp.value=v; }
+        else inp.value=txt;
+      },mic);
+    }
+  }
+}
+const fmt = s => { s=Math.max(0,s); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); };
+
+function buildSummary(){
+  const db=DB.read(); const out=['RESUMEN SEMANA 1 · Adrián · Bomberos AENA',''];
+  Object.keys(SCHEDULE).sort().forEach(d=>{
+    const daily=db['daily|'+d];
+    const lines=[];
+    if(daily&&(daily.fc||daily.sueno||daily.peso)){
+      lines.push(`  diario: FC ${daily.fc||'-'} · sueño ${daily.sueno||'-'} · peso ${daily.peso||'-'}`);
+    }
+    SCHEDULE[d].forEach((key,slot)=>{
+      const done=db[doneKey(d,slot)];
+      const ans=Object.keys(db).filter(k=>k.startsWith('a|'+d+'|'+slot+'|'));
+      if(!done && !ans.length) return;
+      lines.push(`  ${CAL[key].name}: ${done?'COMPLETADA':'incompleta'}`);
+      ans.forEach(k=>{ const id=k.split('|')[3]; lines.push(`    ${id} = ${db[k]}`); });
+    });
+    if(lines.length){ out.push(esDate(d).toUpperCase()); out.push(...lines); out.push(''); }
+  });
+  if(out.length<=2) out.push('(sin datos todavía)');
+  return out.join('\n');
+}
+
+render();
+</script>
+</body>
+</html>
